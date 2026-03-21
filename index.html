@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Πινγκ Πονγκ Μαθηματικών - Β΄ Γυμνασίου</title>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#ff4f87;
+      --bg2:#6b5cff;
+      --bg3:#08c4ff;
+      --ink:#1d2240;
+      --good:#20b45b;
+      --bad:#f25555;
+      --soft:#eef4ff;
+      --shadow:0 8px 24px rgba(0,0,0,0.14);
+      --game-scale:1;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: 'Comfortaa', sans-serif;
+      background:
+        linear-gradient(135deg, rgba(255,79,135,0.18), rgba(107,92,255,0.15), rgba(8,196,255,0.16)),
+        #f7f8ff;
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    body.compact-lock {
+      overflow: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+
+    .appShell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* WELCOME (Unchanged as requested) */
+    #welcomeScreen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.35), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255,255,255,0.28), transparent 24%),
+        linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #welcomeScreen::before,
+    #welcomeScreen::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      background:rgba(255,255,255,0.12);
+      filter: blur(10px);
+      pointer-events:none;
+    }
+
+    #welcomeScreen::before{
+      width: 320px;
+      height: 320px;
+      left: -80px;
+      top: -70px;
+    }
+
+    #welcomeScreen::after{
+      width: 280px;
+      height: 280px;
+      right: -70px;
+      bottom: -60px;
+    }
+
+    .cornerLogo {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 82px;
+      max-width: 16vw;
+      z-index: 3;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+    }
+
+    .welcomeInner {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 10px 14px 4px;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .welcomeLeft {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .heroCard {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.24);
+      border-radius: 22px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+      padding: 10px;
+      width: min(360px, 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .heroCard img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    .welcomeBall {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff7cf, #ffbd3e 58%, #ff8a00 100%);
+      box-shadow: 0 0 0 8px rgba(255,189,62,0.12), 0 8px 16px rgba(255,138,0,0.35);
+      top: 50%;
+      left: 7%;
+      z-index: 3;
+      animation: pingpongWelcome 2.2s ease-in-out infinite alternate;
+    }
+
+    .welcomeTrail {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        radial-gradient(circle at 18% 42%, rgba(255,255,255,0.18), transparent 7%),
+        radial-gradient(circle at 38% 58%, rgba(255,255,255,0.16), transparent 6%),
+        radial-gradient(circle at 57% 40%, rgba(255,255,255,0.13), transparent 5%),
+        radial-gradient(circle at 77% 60%, rgba(255,255,255,0.11), transparent 5%);
+      animation: trailPulse 2.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pingpongWelcome {
+      0%   { left: 8%;  transform: translateY(-44px) scale(1); }
+      25%  { left: 30%; transform: translateY(10px) scale(0.96); }
+      50%  { left: 50%; transform: translateY(-16px) scale(1); }
+      75%  { left: 70%; transform: translateY(12px) scale(0.95); }
+      100% { left: 88%; transform: translateY(-38px) scale(1); }
+    }
+
+    @keyframes trailPulse {
+      0% { opacity: 0.55; }
+      100% { opacity: 1; }
+    }
+
+    .welcomeRight {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+      padding-right: 4px;
+    }
+
+    .welcomeTitle {
+      margin: 0;
+      font-size: clamp(1.7rem, 3.4vw, 2.8rem);
+      line-height: 1.02;
+      font-weight: 700;
+    }
+
+    .welcomeSubtitle {
+      margin: 0;
+      font-size: clamp(0.92rem, 1.6vw, 1.12rem);
+      line-height: 1.24;
+      opacity: 0.96;
+      font-weight: 600;
+      max-width: 650px;
+    }
+
+    .instructionCard,
+    .avatarCard {
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 18px;
+      padding: 10px 10px 8px;
+      backdrop-filter: blur(8px);
+    }
+
+    .instructionCard h2,
+    .avatarCard h2 {
+      margin: 0 0 8px;
+      font-size: 0.96rem;
+    }
+
+    .instructionGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 8px;
+    }
+
+    .instructionItem {
+      background: rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 8px 9px;
+      line-height: 1.18;
+      font-size: 0.79rem;
+      font-weight: 600;
+    }
+
+    .avatarGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .avatarSelector label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .avatarSelector select {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.92);
+      color: var(--ink);
+      font-weight: 700;
+      min-height: 40px;
+    }
+
+    .welcomeActions {
+      display: flex;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .ctaBtn {
+      border: none;
+      border-radius: 14px;
+      padding: 11px 18px;
+      font-family: inherit;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+    }
+
+    .ctaBtn:hover { transform: translateY(-2px); }
+
+    .ctaPrimary {
+      background: white;
+      color: #c9184a;
+      min-width: 220px;
+    }
+
+    .globalFooter {
+      text-align: center;
+      padding: 6px 14px 8px;
+      font-size: 0.74rem;
+      line-height: 1.22;
+      font-weight: 600;
+    }
+
+    #welcomeScreen .globalFooter {
+      color: rgba(255,255,255,0.96);
+      z-index: 1;
+      position: relative;
+    }
+
+    /* COUNTDOWN */
+    #countdownOverlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.08), rgba(17, 18, 38, 0.72)),
+        rgba(17, 18, 38, 0.62);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      overflow: hidden;
+    }
+
+    .countdownNumber {
+      color: white;
+      font-size: clamp(4rem, 14vw, 9rem);
+      font-weight: 700;
+      text-shadow: 0 8px 24px rgba(0,0,0,0.28);
+      animation: popIn 0.9s ease;
+      z-index: 2;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.35); opacity: 0; }
+      40% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* GAME SCREEN (Increased Font Sizes) */
+    #gameScreen {
+      display: none;
+      min-height: 100vh;
+      height: 100vh;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .gameViewport {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 6px;
+    }
+
+    .gameScaleWrap {
+      width: 1320px;
+      height: 780px;
+      transform: scale(var(--game-scale));
+      transform-origin: top center;
+      will-change: transform;
+    }
+
+    .wrap {
+      width: 1320px;
+      height: 780px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto auto 86px auto auto;
+      gap: 8px;
+      overflow: hidden;
+      align-content: start;
+    }
+
+    .topHeader {
+      position: relative;
+      background: linear-gradient(135deg, #ff5ca0, #6b5cff, #13b9ff);
+      color: white;
+      border-radius: 18px;
+      padding: 12px 84px 12px 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .topHeader::before {
+      content:"";
+      position:absolute;
+      inset:auto auto -35px -35px;
+      width: 160px;
+      height: 160px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .topHeader h1 {
+      margin: 0 0 2px;
+      font-size: 1.95rem; /* Increased */
+      line-height: 1.04;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topHeader p {
+      margin: 0;
+      font-size: 1.05rem; /* Increased */
+      line-height: 1.14;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topHeader .cornerLogo {
+      top: 8px;
+      right: 8px;
+      width: 62px;
+      max-width: none;
+    }
+
+    .controlPanel {
+      background: rgba(255,255,255,0.84);
+      backdrop-filter: blur(8px);
+      border: 1px solid #ffffffaa;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .controlGroup label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.88rem; /* Increased */
+      font-weight: 700;
+      color: #4b4d73;
+    }
+
+    .controlGroup select,
+    .controlGroup button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 1.05rem; /* Increased */
+      background: var(--soft);
+      color: var(--ink);
+      font-weight: 600;
+      min-height: 44px;
+    }
+
+    .controlGroup select:focus {
+      outline: 3px solid rgba(107,92,255,0.18);
+    }
+
+    .gameBtn {
+      background: linear-gradient(135deg, #ff7a00, #ff4f87);
+      color: #c9184a !important;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(255,79,135,0.24);
+      transition: transform 0.16s ease;
+    }
+
+    .gameBtn:hover { transform: translateY(-1px); }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .playerCard {
+      background: linear-gradient(180deg, #ffffff, #f6f8ff);
+      border-radius: 16px;
+      padding: 12px;
+      border: 3px solid transparent;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .avatarDisplay {
+      font-size: 1.8rem; /* Increased */
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .playerCard h2 {
+      margin: 0;
+      font-size: 1.2rem; /* Increased */
+      color: #36406b;
+      line-height: 1.08;
+    }
+
+    .score {
+      font-size: 2.6rem; /* Increased */
+      font-weight: 700;
+      color: #121733;
+      line-height: 1.02;
+    }
+
+    .turnLight {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin: 4px auto 0;
+      background: #d9deef;
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.22);
+      transition: 0.18s ease;
+    }
+
+    .active-turn {
+      background: linear-gradient(180deg, #f2fff8, #e7fff0);
+      border-color: #20b45b;
+      box-shadow: 0 0 0 4px rgba(32,180,91,0.14), var(--shadow);
+      transform: translateY(-1px);
+    }
+
+    .active-turn .turnLight {
+      background: #20b45b;
+      box-shadow: 0 0 10px rgba(32,180,91,0.8), 0 0 18px rgba(32,180,91,0.45);
+    }
+
+    .winner-glow {
+      animation: winnerGlow 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes winnerGlow {
+      0% { box-shadow: 0 0 0 4px rgba(255,255,255,0.0), 0 0 0 rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 4px rgba(255,255,255,0.18), 0 0 24px rgba(255,255,255,0.46); }
+    }
+
+    .midInfo {
+      min-width: 180px;
+      background: linear-gradient(180deg, #ffffff, #f8f4ff);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      gap: 4px;
+      font-weight: 700;
+      color: #5c2a90;
+      font-size: 1.1rem; /* Increased */
+    }
+
+    .arena {
+      position: relative;
+      height: 86px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.5)),
+        linear-gradient(135deg, #ffd4e5, #e7dcff, #d6f6ff);
+      border: 3px solid rgba(255,255,255,0.85);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .net {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      transform: translateX(-50%);
+      background: repeating-linear-gradient(to bottom, #8c8db2 0 7px, transparent 7px 12px);
+      opacity: 0.9;
+    }
+
+    .ball {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 22px;
+      height: 22px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff7cf, #ffbd3e 58%, #ff8a00 100%);
+      box-shadow: 0 8px 16px rgba(255,138,0,0.28);
+      transition: left 0.35s ease;
+    }
+
+    .questionPanel {
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid #ffffffcc;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: unset;
+      height: auto;
+      overflow: hidden;
+      align-self: start;
+    }
+
+    .questionMeta {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .turnText {
+      font-size: 1.2rem; /* Increased */
+      font-weight: 700;
+      color: #2b3a68;
+      line-height: 1.1;
+    }
+
+    .category {
+      justify-self: end;
+      background: linear-gradient(135deg, #ffe6f1, #efe7ff);
+      color: #7b1d72;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.95rem; /* Increased */
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    .question {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.75rem; /* Increased */
+      line-height: 1.18;
+      font-weight: 700;
+      color: #161b36;
+      padding: 8px 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(246,248,255,0.72));
+      border-radius: 14px;
+    }
+
+    .question.idle {
+      color: #66719b;
+      font-size: 1.2rem; /* Increased */
+      font-style: italic;
+      background: linear-gradient(180deg, rgba(250,251,255,0.9), rgba(243,246,255,0.9));
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      flex: 0 0 auto;
+      align-content: start;
+    }
+
+    .answers.idle {
+      display: none;
+    }
+
+    .answerBtn {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-height: 64px;
+      font-family: inherit;
+      font-size: 1.3rem; /* Increased */
+      line-height: 1.15;
+      background: linear-gradient(180deg, #eef3ff, #e5edff);
+      color: #1e2448;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+      box-shadow: 0 6px 14px rgba(39,54,97,0.08);
+      text-align: center;
+    }
+
+    .answerBtn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: linear-gradient(180deg, #e4edff, #dbe8ff);
+    }
+
+    .answerBtn:disabled {
+      opacity: 0.86;
+      cursor: default;
+    }
+
+    .correct {
+      background: linear-gradient(180deg, #c8ffd9, #aff0c4) !important;
+      color: #115b2d !important;
+    }
+
+    .wrong {
+      background: linear-gradient(180deg, #ffd2d2, #ffbbbb) !important;
+      color: #7b2323 !important;
+    }
+
+    .message {
+      min-height: 24px;
+      text-align: center;
+      font-size: 1.05rem; /* Increased */
+      line-height: 1.14;
+      font-weight: 700;
+      color: #35406f;
+      padding: 2px 4px;
+    }
+
+    #gameScreen .globalFooter {
+      color: #48507e;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      font-size: 0.75rem;
+    }
+
+    .smallNote {
+      font-size: 0.8rem; /* Increased */
+      color: #606792;
+      font-weight: 600;
+      line-height: 1.12;
+    }
+    /* Rest of CSS remains unchanged */
+    .confettiLayer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 9999;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 16px;
+      opacity: 0.92;
+      top: -20px;
+      animation: confettiFall linear forwards;
+      border-radius: 3px;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0.9; }
+    }
+
+    @media (max-width: 1080px) {
+      .welcomeInner {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 22px;
+      }
+
+      .welcomeRight {
+        align-items: center;
+        padding-right: 0;
+      }
+
+      .instructionGrid,
+      .avatarGrid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      body.compact-lock {
+        overflow: auto;
+      }
+
+      #gameScreen {
+        height: auto;
+        min-height: 100vh;
+        overflow: auto;
+      }
+
+      .gameViewport {
+        height: auto;
+        min-height: 100vh;
+        padding: 8px;
+      }
+
+      .gameScaleWrap {
+        width: 100%;
+        height: auto;
+        transform: none !important;
+      }
+
+      .wrap {
+        width: 100%;
+        height: auto;
+        min-height: calc(100vh - 16px);
+        grid-template-rows: auto;
+      }
+
+      .scoreboard,
+      .controlPanel,
+      .answers,
+      .questionMeta {
+        grid-template-columns: 1fr;
+      }
+
+      .midInfo { min-width: unset; }
+      .category { justify-self: stretch; }
+      .answerBtn { min-height: 56px; }
+    }
+  </style>
+</head>
+<body class="compact-lock">
+  <div class="appShell">
+
+    <section id="welcomeScreen">
+      <img src="logo.png" alt="Logo" class="cornerLogo">
+
+      <div class="welcomeInner">
+        <div class="welcomeLeft">
+          <div class="heroCard">
+            <div class="welcomeTrail"></div>
+            <div class="welcomeBall"></div>
+            <img src="image.png" alt="Μαθηματική εικονογράφηση">
+          </div>
+        </div>
+
+        <div class="welcomeRight">
+          <h1 class="welcomeTitle">Πινγκ Πονγκ Μαθηματικών</h1>
+          <p class="welcomeSubtitle">
+            Μια γρήγορη επανάληψη στα Μαθηματικά της Β΄ Γυμνασίου.
+          </p>
+
+          <div class="instructionCard">
+            <h2>Οδηγίες</h2>
+            <div class="instructionGrid">
+              <div class="instructionItem">🎯 Δύο παίκτες/τριες - ομάδες απαντούν εναλλάξ σε ερωτήσεις πολλαπλής επιλογής.</div>
+              <div class="instructionItem">💡 Η ομάδα που έχει σειρά φωτίζεται με πράσινη ένδειξη.</div>
+              <div class="instructionItem">✅ Κάθε σωστή απάντηση δίνει 1 πόντο.</div>
+              <div class="instructionItem">❌ Σε λάθος απάντηση εμφανίζεται η σωστή επιλογή.</div>
+              <div class="instructionItem">🧮 Μπορείς να επιλέξεις μόνο Άλγεβρα, μόνο Γεωμετρία, συγκεκριμένο κεφάλαιο ή τυχαία μίξη.</div>
+              <div class="instructionItem">🏆 Νικήτρια ομάδα είναι εκείνη με το υψηλότερο σκορ στο τέλος.</div>
+            </div>
+          </div>
+
+          <div class="avatarCard">
+            <h2>Επιλογή avatar ομάδων</h2>
+            <div class="avatarGrid">
+              <div class="avatarSelector">
+                <label for="avatar1">Παίκτης/τρια - Ομάδα 1</label>
+                <select id="avatar1">
+                  <option value="🧠">🧠</option>
+                  <option value="🚀">🚀</option>
+                  <option value="😎">😎</option>
+                  <option value="🔥">🔥</option>
+                  <option value="🎯">🎯</option>
+                  <option value="⚡">⚡</option>
+                  <option value="🌟">🌟</option>
+                  <option value="🤖">🤖</option>
+                </select>
+              </div>
+              <div class="avatarSelector">
+                <label for="avatar2">Παίκτης/τρια - Ομάδα 2</label>
+                <select id="avatar2">
+                  <option value="🎯">🎯</option>
+                  <option value="🧠">🧠</option>
+                  <option value="🚀">🚀</option>
+                  <option value="😎">😎</option>
+                  <option value="🔥">🔥</option>
+                  <option value="⚡">⚡</option>
+                  <option value="🌟">🌟</option>
+                  <option value="🤖">🤖</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="welcomeActions">
+            <button class="ctaBtn ctaPrimary" onclick="startFromWelcome()">Έναρξη Παιχνιδιού</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="globalFooter">
+        Παναγιώτης Δόμβρος, Εκπαιδευτικός Αγγλικής & Θεατρολόγος, Διευθυντής 1ου Γυμνασίου Πυλαίας
+      </div>
+    </section>
+
+    <section id="gameScreen">
+      <div class="gameViewport">
+        <div class="gameScaleWrap" id="gameScaleWrap">
+          <div class="wrap">
+
+            <header class="topHeader">
+              <img src="logo.png" alt="Logo" class="cornerLogo">
+              <h1>Πινγκ Πονγκ Μαθηματικών - Β΄ Γυμνασίου</h1>
+              <p>Επίλεξε ύλη και πάτησε έναρξη για να ξεκινήσει ο αγώνας.</p>
+            </header>
+
+            <section class="controlPanel">
+              <div class="controlGroup">
+                <label for="modeSelect">Τύπος ερωτήσεων</label>
+                <select id="modeSelect">
+                  <option value="all">Τυχαίες από όλη την ύλη</option>
+                  <option value="algebra">Μόνο Άλγεβρα</option>
+                  <option value="geometry">Μόνο Γεωμετρία</option>
+                  <option value="chapter">Συγκεκριμένο κεφάλαιο</option>
+                </select>
+              </div>
+
+              <div class="controlGroup">
+                <label for="chapterSelect">Κεφάλαιο</label>
+                <select id="chapterSelect">
+                  <option value="A1">Α1 - Εξισώσεις / Ανισώσεις</option>
+                  <option value="A2">Α2 - Πραγματικοί αριθμοί</option>
+                  <option value="A3">Α3 - Συναρτήσεις</option>
+                  <option value="A4">Α4 - Περιγραφική Στατιστική</option>
+                  <option value="B1">Β1 - Εμβαδά / Πυθαγόρειο</option>
+                  <option value="B2">Β2 - Τριγωνομετρία / Διανύσματα</option>
+                  <option value="B3">Β3 - Κύκλος</option>
+                  <option value="B4">Β4 - Στερεά</option>
+                </select>
+              </div>
+
+              <div class="controlGroup">
+                <label for="questionCount">Πλήθος ερωτήσεων</label>
+                <select id="questionCount">
+                  <option value="10">10 ερωτήσεις</option>
+                  <option value="15" selected>15 ερωτήσεις</option>
+                  <option value="20">20 ερωτήσεις</option>
+                  <option value="30">30 ερωτήσεις</option>
+                  <option value="40">40 ερωτήσεις</option>
+                </select>
+              </div>
+
+              <div class="controlGroup">
+                <label>&nbsp;</label>
+                <button class="gameBtn" onclick="startGame()">Έναρξη / Νέο Παιχνίδι</button>
+              </div>
+            </section>
+
+            <section class="scoreboard">
+              <div class="playerCard" id="player1Card">
+                <div class="avatarDisplay" id="player1AvatarDisplay">🧠</div>
+                <h2>Παίκτης/τρια - Ομάδα 1</h2>
+                <div class="score" id="p1Score">0</div>
+                <div class="turnLight"></div>
+              </div>
+
+              <div class="midInfo">
+                <div id="phaseLabel">Αναμονή έναρξης</div>
+                <div id="roundInfo">Γύρος 0 / 0</div>
+                <div class="smallNote" id="selectionInfo">Επίλεξε τρόπο παιχνιδιού και πάτησε έναρξη.</div>
+              </div>
+
+              <div class="playerCard" id="player2Card">
+                <div class="avatarDisplay" id="player2AvatarDisplay">🎯</div>
+                <h2>Παίκτης/τρια - Ομάδα 2</h2>
+                <div class="score" id="p2Score">0</div>
+                <div class="turnLight"></div>
+              </div>
+            </section>
+
+            <div class="arena">
+              <div class="net"></div>
+              <div class="ball" id="ball"></div>
+            </div>
+
+            <section class="questionPanel">
+              <div class="questionMeta">
+                <div class="turnText" id="turnText">Πάτησε «Έναρξη / Νέο Παιχνίδι» για να ξεκινήσει ο αγώνας.</div>
+                <div class="category" id="categoryLabel">Κατηγορία: -</div>
+              </div>
+
+              <div class="question idle" id="question">Ο χώρος ερωτήσεων θα ενεργοποιηθεί μόλις επιλεγεί κατηγορία και πατηθεί η έναρξη.</div>
+              <div class="answers idle" id="answers"></div>
+              <div class="message" id="message"></div>
+            </section>
+
+            <div class="globalFooter">
+              Παναγιώτης Δόμβρος, Εκπαιδευτικός Αγγλικής & Θεατρολόγος, Διευθυντής του 1ου Γυμνασίου Πυλαίας
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="countdownOverlay">
+    <div class="countdownNumber" id="countdownNumber">3</div>
+  </div>
+
+  <div class="confettiLayer" id="confettiLayer"></div>
+
+  <script>
+    const questionBanks = {
+      A1: [
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν x + 8 = 15, τότε x =", options:["6","7","8","9"], correctIndex:1 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Η λύση της εξίσωσης 4x = 28 είναι:", options:["6","7","8","9"], correctIndex:1 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν 2x + 3 = 11, τότε x =", options:["3","4","5","6"], correctIndex:1 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν 5x - 10 = 15, τότε x =", options:["4","5","6","7"], correctIndex:1 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Ποιος αριθμός επαληθεύει την ανίσωση x > 9;", options:["8","9","10","7"], correctIndex:2 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Ποιος αριθμός ανήκει στις λύσεις της ανίσωσης x ≤ 3;", options:["5","4","3","6"], correctIndex:2 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Η τιμή της παράστασης 3α + 2 για α = 4 είναι:", options:["12","13","14","15"], correctIndex:2 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Η τιμή της παράστασης 2β - 5 για β = 6 είναι:", options:["5","6","7","8"], correctIndex:2 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν x/3 = 5, τότε x =", options:["10","12","15","18"], correctIndex:2 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν x - 12 = -3, τότε x =", options:["7","8","9","10"], correctIndex:2 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν 7 + 2x = 19, τότε x =", options:["5","6","7","8"], correctIndex:1 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Ποιος αριθμός ΔΕΝ ικανοποιεί την ανίσωση x < 4;", options:["1","2","3","4"], correctIndex:3 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν 3(x - 1) = 12, τότε x =", options:["4","5","6","7"], correctIndex:1 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Αν 2x = x + 9, τότε x =", options:["7","8","9","10"], correctIndex:2 },
+        { category:"Α1 - Εξισώσεις / Ανισώσεις", prompt:"Σε πρόβλημα «ένας αριθμός αυξημένος κατά 5 είναι 17», ο αριθμός είναι:", options:["10","11","12","13"], correctIndex:2 }
+      ],
+      A2: [
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Η τετραγωνική ρίζα του 81 είναι:", options:["7","8","9","10"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Η τετραγωνική ρίζα του 100 είναι:", options:["8","9","10","11"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Ποιος από τους παρακάτω είναι άρρητος αριθμός;", options:["0,5","3/4","√3","7"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Ποιος από τους παρακάτω είναι ρητός αριθμός;", options:["√2","π","7/8","√5"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Το √49 ισούται με:", options:["5","6","7","8"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Το √121 ισούται με:", options:["9","10","11","12"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Ποιος αριθμός βρίσκεται πιο κοντά στο √16;", options:["2","3","4","5"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Το √1,44 ισούται με:", options:["1,1","1,2","1,3","1,4"], correctIndex:1 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Ποιος από τους παρακάτω είναι θετικός πραγματικός;", options:["-5","-√9","√25","0"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Ποιος είναι μεγαλύτερος;", options:["1","√2","0,9","1,1"], correctIndex:1 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Το τετράγωνο του 6 είναι:", options:["12","24","30","36"], correctIndex:3 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Ποιο από τα παρακάτω είναι ίσο με 2;", options:["√2","√3","√4","√8"], correctIndex:2 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Οι αριθμοί 0, 1/2 και √2 ανήκουν στο σύνολο των:", options:["ακεραίων","ρητών","φυσικών","πραγματικών"], correctIndex:3 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Ποιος αριθμός ΔΕΝ είναι πραγματικός; (σχολικό επίπεδο)", options:["0","1","√9","κανένας από αυτούς"], correctIndex:3 },
+        { category:"Α2 - Πραγματικοί αριθμοί", prompt:"Το √64 + 1 ισούται με:", options:["7","8","9","10"], correctIndex:2 }
+      ],
+      A3: [
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = 2x, όταν x = 5, το y είναι:", options:["8","9","10","11"], correctIndex:2 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = 3x + 1, όταν x = 2, το y είναι:", options:["5","6","7","8"], correctIndex:2 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = x - 4, όταν x = 9, το y είναι:", options:["4","5","6","7"], correctIndex:1 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Το σημείο με τετμημένη 4 και τεταγμένη 1 γράφεται:", options:["(1,4)","(4,1)","(-4,1)","(4,-1)"], correctIndex:1 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = x/2, όταν x = 8, το y είναι:", options:["2","3","4","5"], correctIndex:2 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = 5x, όταν x = 0, το y είναι:", options:["0","1","5","10"], correctIndex:0 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = 2x + 3, ποια τιμή αντιστοιχεί στο x = 1;", options:["4","5","6","7"], correctIndex:1 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Ποιο σημείο ανήκει στη γραφική παράσταση της y = 2x;", options:["(1,2)","(2,1)","(2,3)","(0,2)"], correctIndex:0 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = αx, αν α = 4 και x = 3, τότε y =", options:["7","10","12","14"], correctIndex:2 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = αx + β, αν α = 2, β = 1 και x = 3, τότε y =", options:["6","7","8","9"], correctIndex:1 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = 12/x, όταν x = 3, τότε y =", options:["2","3","4","6"], correctIndex:2 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στη συνάρτηση y = 12/x, όταν x = 4, τότε y =", options:["2","3","4","5"], correctIndex:1 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στο σημείο (-2, 5), η τετμημένη είναι:", options:["-2","2","5","-5"], correctIndex:0 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Στο σημείο (3, -1), η τεταγμένη είναι:", options:["3","-3","-1","1"], correctIndex:2 },
+        { category:"Α3 - Συναρτήσεις", prompt:"Αν y = 4x - 2 και x = 2, τότε y =", options:["4","5","6","7"], correctIndex:2 }
+      ],
+      A4: [
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Στο σύνολο 2, 4, 6, 8 η μέση τιμή είναι:", options:["4","5","6","7"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Στο σύνολο 1, 3, 3, 7, 9 η διάμεσος είναι:", options:["2","3","4","5"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Στο σύνολο 2, 2, 5, 7 η επικρατούσα τιμή είναι:", options:["2","5","7","δεν υπάρχει"], correctIndex:0 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Ο μέσος όρος των αριθμών 10 και 14 είναι:", options:["11","12","13","14"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Σε πίνακα συχνοτήτων, η συχνότητα δείχνει:", options:["τη μέση τιμή","πόσες φορές εμφανίζεται μία τιμή","τη μικρότερη τιμή","το άθροισμα"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Στο σύνολο 5, 6, 7, 8, 9 η διάμεσος είναι:", options:["6","7","8","9"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Το δείγμα είναι:", options:["όλος ο πληθυσμός","ένα μέρος του πληθυσμού","ο μέσος όρος","ο πίνακας τιμών"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Ποιο γράφημα είναι κατάλληλο για σύγκριση κατηγοριών;", options:["ραβδόγραμμα","ευθεία","κύκλος","σημείο"], correctIndex:0 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Στο σύνολο 4, 6, 6, 6, 9 η επικρατούσα τιμή είναι:", options:["4","6","8","9"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Ο μέσος όρος των 3, 5 και 7 είναι:", options:["4","5","6","7"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Το εύρος ενός συνόλου τιμών είναι:", options:["η μέση τιμή","η μεγαλύτερη τιμή μείον τη μικρότερη","η διάμεσος","η επικρατούσα τιμή"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Στο σύνολο 2, 4, 4, 8 η διάμεσος είναι:", options:["3","4","5","6"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Αν σε δείγμα 20 μαθητών οι 5 φορούν γυαλιά, η σχετική συχνότητα είναι:", options:["1/2","1/3","1/4","1/5"], correctIndex:2 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Ο πληθυσμός σε στατιστική έρευνα είναι:", options:["το δείγμα","όλες οι μονάδες που μας ενδιαφέρουν","η διάμεσος","η συχνότητα"], correctIndex:1 },
+        { category:"Α4 - Περιγραφική Στατιστική", prompt:"Στο σύνολο 1, 2, 3, 10, 14 η μέση τιμή είναι:", options:["5","6","7","8"], correctIndex:1 }
+      ],
+      B1: [
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το εμβαδόν ορθογωνίου με μήκος 9 cm και πλάτος 4 cm είναι:", options:["13 cm²","18 cm²","36 cm²","45 cm²"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το εμβαδόν τετραγώνου πλευράς 6 cm είναι:", options:["12 cm²","24 cm²","30 cm²","36 cm²"], correctIndex:3 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το εμβαδόν τριγώνου με βάση 10 cm και ύψος 6 cm είναι:", options:["20 cm²","30 cm²","40 cm²","60 cm²"], correctIndex:1 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το εμβαδόν παραλληλογράμμου με βάση 7 cm και ύψος 5 cm είναι:", options:["12 cm²","24 cm²","35 cm²","49 cm²"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Σε ορθογώνιο τρίγωνο με κάθετες πλευρές 3 και 4, η υποτείνουσα είναι:", options:["4","5","6","7"], correctIndex:1 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Σε ορθογώνιο τρίγωνο με κάθετες πλευρές 5 και 12, η υποτείνουσα είναι:", options:["11","12","13","14"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Αν η υποτείνουσα είναι 10 και μία κάθετη πλευρά 6, η άλλη είναι:", options:["6","7","8","9"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"1 m² ισούται με:", options:["100 cm²","1.000 cm²","10.000 cm²","100.000 cm²"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το εμβαδόν τραπεζίου με βάσεις 8 cm και 4 cm και ύψος 5 cm είναι:", options:["20 cm²","24 cm²","30 cm²","40 cm²"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το τετράγωνο της υποτείνουσας σε ορθογώνιο τρίγωνο ισούται με:", options:["τη διαφορά των τετραγώνων","το άθροισμα των τετραγώνων των καθέτων πλευρών","το διπλάσιο της βάσης","το μισό του αθροίσματος"], correctIndex:1 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το εμβαδόν ορθογωνίου με διαστάσεις 11 cm και 2 cm είναι:", options:["13 cm²","20 cm²","22 cm²","24 cm²"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Αν πλευρά τετραγώνου διπλασιαστεί, το εμβαδόν γίνεται:", options:["διπλάσιο","τριπλάσιο","τετραπλάσιο","ίδιο"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Σε ορθογώνιο τρίγωνο 8-15-17, η υποτείνουσα είναι:", options:["8","15","16","17"], correctIndex:3 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Το εμβαδόν τριγώνου με βάση 12 και ύψος 9 είναι:", options:["42","48","54","60"], correctIndex:2 },
+        { category:"Β1 - Εμβαδά / Πυθαγόρειο", prompt:"Ποιο ζεύγος μπορεί να είναι κάθετες πλευρές ορθογώνιου τριγώνου με υποτείνουσα 25;", options:["5 και 20","7 και 24","8 και 20","10 και 22"], correctIndex:1 }
+      ],
+      B2: [
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Η εφαπτομένη οξείας γωνίας είναι:", options:["απέναντι / προσκείμενη","υποτείνουσα / απέναντι","προσκείμενη / υποτείνουσα","άθροισμα πλευρών"], correctIndex:0 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Το ημίτονο οξείας γωνίας είναι:", options:["προσκείμενη / απέναντι","απέναντι / υποτείνουσα","υποτείνουσα / προσκείμενη","απέναντι / προσκείμενη"], correctIndex:1 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Το συνημίτονο οξείας γωνίας είναι:", options:["προσκείμενη / υποτείνουσα","απέναντι / υποτείνουσα","απέναντι / προσκείμενη","υποτείνουσα / απέναντι"], correctIndex:0 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Η τιμή του ημ 30° είναι:", options:["1","1/2","√2/2","√3/2"], correctIndex:1 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Η τιμή του συν 60° είναι:", options:["1","1/2","√2/2","√3/2"], correctIndex:1 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Η τιμή της εφ 45° είναι:", options:["0","1/2","1","2"], correctIndex:2 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Για οξεία γωνία, όσο μεγαλώνει η γωνία τόσο το ημίτονο:", options:["μειώνεται","μένει ίδιο","αυξάνεται","μηδενίζεται"], correctIndex:2 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Διάνυσμα έχει:", options:["μόνο μέτρο","μόνο φορά","μέτρο και κατεύθυνση","μόνο αρχή"], correctIndex:2 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Δύο ίσα διανύσματα έχουν:", options:["ίδιο μέτρο μόνο","ίδια κατεύθυνση μόνο","ίδιο μέτρο και ίδια κατεύθυνση","ίδιο σημείο εφαρμογής"], correctIndex:2 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Το άθροισμα δύο διανυσμάτων βρίσκεται συνήθως με:", options:["Πυθαγόρειο","κανόνα του παραλληλογράμμου","μέση τιμή","ανίσωση"], correctIndex:1 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Το αντίθετο ενός διανύσματος έχει:", options:["ίδιο μέτρο και αντίθετη φορά","μικρότερο μέτρο","ίδια φορά","καμία διεύθυνση"], correctIndex:0 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Η τιμή του συν 45° είναι:", options:["1/2","√2/2","√3/2","1"], correctIndex:1 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Η τιμή του ημ 60° είναι:", options:["1/2","√2/2","√3/2","1"], correctIndex:2 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Αν δύο διανύσματα είναι κάθετα, τότε σχηματίζουν γωνία:", options:["45°","60°","90°","180°"], correctIndex:2 },
+        { category:"Β2 - Τριγωνομετρία / Διανύσματα", prompt:"Η ανάλυση διανύσματος σε δύο κάθετες συνιστώσες δίνει:", options:["δύο ίσες γωνίες","δύο κάθετα διανύσματα που το συνθέτουν","ένα μόνο μέτρο","μία υποτείνουσα"], correctIndex:1 }
+      ],
+      B3: [
+        { category:"Β3 - Κύκλος", prompt:"Το μήκος κύκλου ακτίνας r είναι:", options:["πr²","2πr","πd²","r²/2"], correctIndex:1 },
+        { category:"Β3 - Κύκλος", prompt:"Το εμβαδόν κυκλικού δίσκου ακτίνας r είναι:", options:["2πr","πr","πr²","2πr²"], correctIndex:2 },
+        { category:"Β3 - Κύκλος", prompt:"Αν η ακτίνα είναι 5 cm, το μήκος του κύκλου είναι:", options:["5π cm","10π cm","15π cm","25π cm"], correctIndex:1 },
+        { category:"Β3 - Κύκλος", prompt:"Αν η ακτίνα είναι 3 cm, το εμβαδόν του δίσκου είναι:", options:["3π cm²","6π cm²","9π cm²","12π cm²"], correctIndex:2 },
+        { category:"Β3 - Κύκλος", prompt:"Η διάμετρος κύκλου ακτίνας 7 cm είναι:", options:["7 cm","10 cm","12 cm","14 cm"], correctIndex:3 },
+        { category:"Β3 - Κύκλος", prompt:"Το μήκος τόξου ημικυκλίου είναι:", options:["μισό του μήκους του κύκλου","διπλάσιο του κύκλου","ίσο με τη διάμετρο","ίσο με την ακτίνα"], correctIndex:0 },
+        { category:"Β3 - Κύκλος", prompt:"Ένα κανονικό εξάγωνο έχει:", options:["6 ίσες πλευρές και 6 ίσες γωνίες","μόνο ίσες γωνίες","5 πλευρές","6 άνισες πλευρές"], correctIndex:0 },
+        { category:"Β3 - Κύκλος", prompt:"Εγγεγραμμένη γωνία που βαίνει σε ημικύκλιο είναι:", options:["45°","60°","90°","120°"], correctIndex:2 },
+        { category:"Β3 - Κύκλος", prompt:"Αν η διάμετρος είναι 10 cm, τότε η ακτίνα είναι:", options:["4 cm","5 cm","6 cm","10 cm"], correctIndex:1 },
+        { category:"Β3 - Κύκλος", prompt:"Το εμβαδόν κυκλικού τομέα 90° είναι:", options:["το 1/2 του κύκλου","το 1/3 του κύκλου","το 1/4 του κύκλου","το 1/8 του κύκλου"], correctIndex:2 },
+        { category:"Β3 - Κύκλος", prompt:"Αν r = 4 cm, τότε το μήκος κύκλου είναι:", options:["4π","6π","8π","16π"], correctIndex:2 },
+        { category:"Β3 - Κύκλος", prompt:"Αν r = 4 cm, τότε το εμβαδόν δίσκου είναι:", options:["4π","8π","12π","16π"], correctIndex:3 },
+        { category:"Β3 - Κύκλος", prompt:"Η διάμετρος είναι:", options:["η μικρότερη χορδή","η μεγαλύτερη χορδή που περνά από το κέντρο","η απόσταση δύο τόξων","το μισό της ακτίνας"], correctIndex:1 },
+        { category:"Β3 - Κύκλος", prompt:"Ένα κανονικό οκτάγωνο έχει:", options:["6 πλευρές","7 πλευρές","8 πλευρές","10 πλευρές"], correctIndex:2 },
+        { category:"Β3 - Κύκλος", prompt:"Το μήκος τόξου 180° είναι:", options:["το 1/4 του κύκλου","το 1/3 του κύκλου","το 1/2 του κύκλου","όλος ο κύκλος"], correctIndex:2 }
+      ],
+      B4: [
+        { category:"Β4 - Στερεά", prompt:"Ο όγκος πρίσματος δίνεται από:", options:["εμβαδόν βάσης × ύψος","περίμετρος βάσης × ύψος","μήκος + πλάτος + ύψος","2 × εμβαδόν βάσης"], correctIndex:0 },
+        { category:"Β4 - Στερεά", prompt:"Ο κύλινδρος έχει:", options:["μία κορυφή","δύο ίσες κυκλικές βάσεις","τριγωνικές βάσεις","καμία βάση"], correctIndex:1 },
+        { category:"Β4 - Στερεά", prompt:"Η πυραμίδα έχει ως πλευρικές έδρες:", options:["ορθογώνια","κύκλους","τρίγωνα","εξάγωνα"], correctIndex:2 },
+        { category:"Β4 - Στερεά", prompt:"Ο κώνος έχει:", options:["δύο κυκλικές βάσεις","μία κυκλική βάση και κορυφή","τρεις κορυφές","καμία βάση"], correctIndex:1 },
+        { category:"Β4 - Στερεά", prompt:"Η σφαίρα έχει:", options:["καμπύλη επιφάνεια χωρίς ακμές","4 ακμές","2 βάσεις","1 κορυφή"], correctIndex:0 },
+        { category:"Β4 - Στερεά", prompt:"Το πρίσμα έχει δύο βάσεις που είναι:", options:["κάθετες","παράλληλες και ίσες","άνισες","κυκλικές πάντα"], correctIndex:1 },
+        { category:"Β4 - Στερεά", prompt:"Ο όγκος κυλίνδρου δίνεται από:", options:["περίμετρος βάσης × ύψος","εμβαδόν βάσης × ύψος","διάμετρος × ύψος","2πr"], correctIndex:1 },
+        { category:"Β4 - Στερεά", prompt:"Ένα ορθογώνιο παραλληλεπίπεδο είναι είδος:", options:["πρίσματος","κώνου","σφαίρας","πυραμίδας"], correctIndex:0 },
+        { category:"Β4 - Στερεά", prompt:"Στον χώρο, δύο επίπεδα μπορεί να είναι:", options:["μόνο παράλληλα","μόνο κάθετα","παράλληλα ή να τέμνονται","πάντα ίσα"], correctIndex:2 },
+        { category:"Β4 - Στερεά", prompt:"Ο κύλινδρος προκύπτει από περιστροφή:", options:["ορθογωνίου γύρω από πλευρά του","κύκλου γύρω από ακτίνα","τριγώνου γύρω από βάση","τραπεζίου"], correctIndex:0 },
+        { category:"Β4 - Στερεά", prompt:"Ο κώνος προκύπτει από περιστροφή:", options:["τετραγώνου","κύκλου","ορθογωνίου τριγώνου","παραλληλογράμμου"], correctIndex:2 },
+        { category:"Β4 - Στερεά", prompt:"Η σφαίρα προκύπτει από περιστροφή:", options:["κύκλου γύρω από διάμετρο","ευθείας","ορθογωνίου","τόξου"], correctIndex:0 },
+        { category:"Β4 - Στερεά", prompt:"Οι γεωγραφικές συντεταγμένες χρησιμοποιούν:", options:["μήκος και πλάτος","ύψος και βάθος","ακτίνα και διάμετρο","εμβαδό και περίμετρο"], correctIndex:0 },
+        { category:"Β4 - Στερεά", prompt:"Ένα πρίσμα με τριγωνικές βάσεις λέγεται:", options:["τριγωνικό πρίσμα","ορθογώνιο","κώνος","κύλινδρος"], correctIndex:0 },
+        { category:"Β4 - Στερεά", prompt:"Η πλευρική επιφάνεια του κυλίνδρου, όταν αναπτυχθεί, δίνει:", options:["τετράγωνο","τρίγωνο","ορθογώνιο","κύκλο"], correctIndex:2 }
+      ]
+    };
+
+    const algebraChapters = ["A1", "A2", "A3", "A4"];
+    const geometryChapters = ["B1", "B2", "B3", "B4"];
+
+    let gameQuestions = [];
+    let currentIndex = 0;
+    let activePlayer = 1;
+    let p1Score = 0;
+    let p2Score = 0;
+    let currentQuestion = null;
+    let locked = false;
+    let gameStarted = false;
+
+    const modeSelect = document.getElementById("modeSelect");
+    const chapterSelect = document.getElementById("chapterSelect");
+    const questionCountSelect = document.getElementById("questionCount");
+    const avatar1Select = document.getElementById("avatar1");
+    const avatar2Select = document.getElementById("avatar2");
+
+    const p1ScoreEl = document.getElementById("p1Score");
+    const p2ScoreEl = document.getElementById("p2Score");
+    const phaseLabelEl = document.getElementById("phaseLabel");
+    const roundInfoEl = document.getElementById("roundInfo");
+    const selectionInfoEl = document.getElementById("selectionInfo");
+    const turnTextEl = document.getElementById("turnText");
+    const categoryLabelEl = document.getElementById("categoryLabel");
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const messageEl = document.getElementById("message");
+    const ballEl = document.getElementById("ball");
+    const player1Card = document.getElementById("player1Card");
+    const player2Card = document.getElementById("player2Card");
+    const player1AvatarDisplay = document.getElementById("player1AvatarDisplay");
+    const player2AvatarDisplay = document.getElementById("player2AvatarDisplay");
+
+    const countdownOverlay = document.getElementById("countdownOverlay");
+    const countdownNumber = document.getElementById("countdownNumber");
+    const confettiLayer = document.getElementById("confettiLayer");
+
+    modeSelect.addEventListener("change", updateChapterSelectorState);
+    avatar1Select.addEventListener("change", syncAvatars);
+    avatar2Select.addEventListener("change", syncAvatars);
+    window.addEventListener("resize", applyAutoFitScaling);
+
+    updateChapterSelectorState();
+    syncAvatars();
+    renderIdleState();
+    applyAutoFitScaling();
+
+    function updateChapterSelectorState() {
+      const isChapter = modeSelect.value === "chapter";
+      chapterSelect.disabled = !isChapter;
+      chapterSelect.style.opacity = isChapter ? "1" : "0.55";
+    }
+
+    function syncAvatars() {
+      player1AvatarDisplay.textContent = avatar1Select.value;
+      player2AvatarDisplay.textContent = avatar2Select.value;
+    }
+
+    function renderIdleState() {
+      gameStarted = false;
+      phaseLabelEl.textContent = "Αναμονή έναρξης";
+      roundInfoEl.textContent = "Γύρος 0 / 0";
+      turnTextEl.textContent = "Πάτησε «Έναρξη / Νέο Παιχνίδι» για να ξεκινήσει ο αγώνας.";
+      categoryLabelEl.textContent = "Κατηγορία: -";
+      questionEl.textContent = "Ο χώρος ερωτήσεων θα ενεργοποιηθεί μόλις επιλεγεί κατηγορία και πατηθεί η έναρξη.";
+      questionEl.classList.add("idle");
+      answersEl.innerHTML = "";
+      answersEl.classList.add("idle");
+      messageEl.textContent = "";
+      ballEl.style.left = "50%";
+      player1Card.classList.remove("active-turn", "winner-glow");
+      player2Card.classList.remove("active-turn", "winner-glow");
+    }
+
+    function applyAutoFitScaling() {
+      if (window.innerWidth <= 820) {
+        document.documentElement.style.setProperty("--game-scale", "1");
+        return;
+      }
+
+      const viewportW = window.innerWidth - 12;
+      const viewportH = window.innerHeight - 12;
+      const designW = 1320;
+      const designH = 780;
+
+      const scaleX = viewportW / designW;
+      const scaleY = viewportH / designH;
+      const scale = Math.min(scaleX, scaleY, 1);
+
+      document.documentElement.style.setProperty("--game-scale", String(scale));
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function buildQuestionSet() {
+      const mode = modeSelect.value;
+      const count = parseInt(questionCountSelect.value, 10);
+      let source = [];
+      let label = "";
+
+      if (mode === "all") {
+        label = "Τυχαίες ερωτήσεις από όλη την ύλη";
+        source = Object.values(questionBanks).flat();
+      } else if (mode === "algebra") {
+        label = "Μόνο Άλγεβρα";
+        source = algebraChapters.flatMap(ch => questionBanks[ch]);
+      } else if (mode === "geometry") {
+        label = "Μόνο Γεωμετρία";
+        source = geometryChapters.flatMap(ch => questionBanks[ch]);
+      } else {
+        const ch = chapterSelect.value;
+        const chapterNames = {
+          A1: "Α1 - Εξισώσεις / Ανισώσεις",
+          A2: "Α2 - Πραγματικοί αριθμοί",
+          A3: "Α3 - Συναρτήσεις",
+          A4: "Α4 - Περιγραφική Στατιστική",
+          B1: "Β1 - Εμβαδά / Πυθαγόρειο",
+          B2: "Β2 - Τριγωνομετρία / Διανύσματα",
+          B3: "Β3 - Κύκλος",
+          B4: "Β4 - Στερεά"
+        };
+        label = chapterNames[ch];
+        source = questionBanks[ch];
+      }
+
+      selectionInfoEl.textContent = label;
+
+      const shuffled = shuffle(source);
+      if (count <= shuffled.length) return shuffled.slice(0, count);
+
+      const out = [];
+      while (out.length < count) out.push(...shuffle(source));
+      return out.slice(0, count);
+    }
+
+    function playTone(freq, start, duration, gainAmount, type = "sine") {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      if (!window.__audioCtx) window.__audioCtx = new AudioContextClass();
+
+      const ctx = window.__audioCtx;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = type;
+      osc.frequency.value = freq;
+
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(gainAmount, start + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + duration + 0.03);
+      return ctx;
+    }
+
+    function ensureAudioReady() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      if (!window.__audioCtx) window.__audioCtx = new AudioContextClass();
+      if (window.__audioCtx.state === "suspended") {
+        window.__audioCtx.resume();
+      }
+      return window.__audioCtx;
+    }
+
+    function playStartSound() {
+      try {
+        const ctx = ensureAudioReady();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        playTone(523.25, now, 0.20, 0.22);
+        playTone(659.25, now + 0.12, 0.20, 0.24);
+        playTone(783.99, now + 0.24, 0.24, 0.28);
+      } catch (e) {}
+    }
+
+    function playCorrectSound() {
+      try {
+        const ctx = ensureAudioReady();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        playTone(587.33, now, 0.15, 0.22);
+        playTone(783.99, now + 0.08, 0.22, 0.28);
+      } catch (e) {}
+    }
+
+    function playWrongSound() {
+      try {
+        const ctx = ensureAudioReady();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        playTone(392.00, now, 0.22, 0.20, "triangle");
+        playTone(293.66, now + 0.09, 0.26, 0.22, "triangle");
+      } catch (e) {}
+    }
+
+    function startFromWelcome() {
+      syncAvatars();
+      ensureAudioReady();
+      document.getElementById("welcomeScreen").style.display = "none";
+      document.getElementById("gameScreen").style.display = "block";
+      renderIdleState();
+      applyAutoFitScaling();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startGame() {
+      syncAvatars();
+      ensureAudioReady();
+      renderIdleState();
+      startCountdownThenGame();
+    }
+
+    function startCountdownThenGame() {
+      countdownOverlay.style.display = "flex";
+      const steps = ["3", "2", "1", "Πάμε!"];
+      let idx = 0;
+
+      function showStep() {
+        countdownNumber.textContent = steps[idx];
+        countdownNumber.style.animation = "none";
+        void countdownNumber.offsetWidth;
+        countdownNumber.style.animation = "popIn 0.9s ease";
+
+        if (steps[idx] === "Πάμε!") {
+          playStartSound();
+        }
+
+        idx++;
+        if (idx < steps.length) {
+          setTimeout(showStep, 760);
+        } else {
+          setTimeout(() => {
+            countdownOverlay.style.display = "none";
+            beginActualGame();
+          }, 640);
+        }
+      }
+
+      showStep();
+    }
+
+    function beginActualGame() {
+      gameQuestions = buildQuestionSet();
+      currentIndex = 0;
+      activePlayer = 1;
+      p1Score = 0;
+      p2Score = 0;
+      locked = false;
+      gameStarted = true;
+      updateScores();
+      updateTurnUI();
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentIndex >= gameQuestions.length) {
+        endGame();
+        return;
+      }
+
+      currentQuestion = gameQuestions[currentIndex];
+      locked = false;
+      questionEl.textContent = currentQuestion.prompt;
+      questionEl.classList.remove("idle");
+      categoryLabelEl.textContent = `Κατηγορία: ${currentQuestion.category}`;
+      phaseLabelEl.textContent = currentQuestion.category;
+      roundInfoEl.textContent = `Γύρος ${currentIndex + 1} / ${gameQuestions.length}`;
+      messageEl.textContent = "";
+      ballEl.style.left = "50%";
+
+      renderAnswers();
+      updateTurnUI();
+    }
+
+    function renderAnswers() {
+      answersEl.innerHTML = "";
+      answersEl.classList.remove("idle");
+      currentQuestion.options.forEach((option, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "answerBtn";
+        btn.textContent = option;
+        btn.addEventListener("click", () => submitChoice(idx, btn));
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function submitChoice(choiceIndex, clickedButton) {
+      if (locked || !gameStarted) return;
+      locked = true;
+
+      const buttons = [...document.querySelectorAll(".answerBtn")];
+      buttons.forEach(btn => btn.disabled = true);
+
+      const correctButton = buttons[currentQuestion.correctIndex];
+
+      if (choiceIndex === currentQuestion.correctIndex) {
+        clickedButton.classList.add("correct");
+        playCorrectSound();
+
+        if (activePlayer === 1) {
+          p1Score++;
+          ballEl.style.left = "22%";
+          messageEl.textContent = "Σωστό! Η Ομάδα 1 παίρνει πόντο.";
+        } else {
+          p2Score++;
+          ballEl.style.left = "78%";
+          messageEl.textContent = "Σωστό! Η Ομάδα 2 παίρνει πόντο.";
+        }
+      } else {
+        clickedButton.classList.add("wrong");
+        if (correctButton) correctButton.classList.add("correct");
+        playWrongSound();
+        messageEl.textContent = `Λάθος. Σωστή απάντηση: ${currentQuestion.options[currentQuestion.correctIndex]}`;
+      }
+
+      updateScores();
+
+      setTimeout(() => {
+        currentIndex++;
+        activePlayer = activePlayer === 1 ? 2 : 1;
+        nextQuestion();
+      }, 1250);
+    }
+
+    function updateScores() {
+      p1ScoreEl.textContent = p1Score;
+      p2ScoreEl.textContent = p2Score;
+    }
+
+    function updateTurnUI() {
+      player1Card.classList.remove("active-turn");
+      player2Card.classList.remove("active-turn");
+
+      if (!gameStarted) return;
+
+      if (activePlayer === 1) {
+        player1Card.classList.add("active-turn");
+        turnTextEl.textContent = `Σειρά της Παίκτριας/του Παίκτη - Ομάδας 1 ${avatar1Select.value}`;
+      } else {
+        player2Card.classList.add("active-turn");
+        turnTextEl.textContent = `Σειρά της Παίκτριας/του Παίκτη - Ομάδας 2 ${avatar2Select.value}`;
+      }
+    }
+
+    function launchConfetti() {
+      confettiLayer.innerHTML = "";
+      const colors = ["#ff4f87", "#6b5cff", "#08c4ff", "#ffbd3e", "#20b45b", "#ffffff"];
+      for (let i = 0; i < 90; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti";
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = `${3 + Math.random() * 2}s`;
+        piece.style.animationDelay = `${Math.random() * 0.8}s`;
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confettiLayer.appendChild(piece);
+      }
+      setTimeout(() => confettiLayer.innerHTML = "", 6000);
+    }
+
+    function endGame() {
+      answersEl.innerHTML = "";
+      answersEl.classList.add("idle");
+      categoryLabelEl.textContent = "Τέλος παιχνιδιού";
+      phaseLabelEl.textContent = "Ο αγώνας ολοκληρώθηκε";
+      roundInfoEl.textContent = "Τελικό σκορ";
+      turnTextEl.textContent = "Μπράβο και στις δύο ομάδες!";
+      gameStarted = false;
+
+      player1Card.classList.remove("active-turn");
+      player2Card.classList.remove("active-turn");
+
+      if (p1Score > p2Score) {
+        questionEl.textContent = `Νικήτρια: Ομάδα 1 ${avatar1Select.value}!`;
+        questionEl.classList.remove("idle");
+        player1Card.classList.add("winner-glow");
+        launchConfetti();
+      } else if (p2Score > p1Score) {
+        questionEl.textContent = `Νικήτρια: Ομάδα 2 ${avatar2Select.value}!`;
+        questionEl.classList.remove("idle");
+        player2Card.classList.add("winner-glow");
+        launchConfetti();
+      } else {
+        questionEl.textContent = "Ισοπαλία!";
+        questionEl.classList.remove("idle");
+        launchConfetti();
+      }
+
+      messageEl.textContent = `Τελικό σκορ: Ομάδα 1 = ${p1Score} | Ομάδα 2 = ${p2Score}`;
+      ballEl.style.left = "50%";
+    }
+  </script>
+</body>
+</html>
